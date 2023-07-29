@@ -1,0 +1,214 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins');
+body{
+    background-color: ivory;
+}
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'poppins',sans-serif;
+}
+
+.nav{
+    background-color:#b70000;
+    justify-content: space-between;
+}
+.nav-item a {
+    color: ivory;
+}
+.right li{
+    display: inline-block;
+}
+
+.functions {
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+}
+
+.f {
+    width: 200px;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 50px 50px;
+    transition: width 0.5s ease,height 0.5s ease;
+    cursor: pointer;
+}
+
+.f:hover{
+    width: 300px;
+    height: 240px;
+}
+
+.f:hover img {
+    transform: scale(1.2);
+}
+.f:hover label {
+    margin-top: 22px;
+}
+.f button {
+    border: none;
+    background-color: transparent;
+}
+img {
+    border: solid rgb(34, 32, 32) 1px;
+    box-shadow: 0  0 10px black;
+    object-fit: contain;
+    background-color:rgb(250, 250, 216);
+    transition: width 0.5s ease,height 0.5s ease;
+}
+    
+.f label{
+    text-align: center;
+    margin-top: 5px;
+} 
+
+h3 {
+    text-align: center;
+    margin-top: 50px;
+    color: #820d0d;
+    font-weight: bold;
+}
+
+.pbar {
+    top: 42px;
+    right: 4px;
+    background-color: rgb(237, 239, 241);
+    position: absolute;
+    display: none;
+    width: 250px;
+    height: 280px;
+    border-radius: 4px;
+    border: none;
+    box-shadow: 0 0 10px black;
+    flex-direction: column;
+    padding: 10px 0;
+}
+.pitem {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-bottom: solid 1px black;
+}
+.pitem img {
+    border-radius: 50%;
+    background-color: grey;
+}
+
+.p1 {
+    border-bottom: solid 1px black;
+    text-align: center;
+    font-size: medium;
+    padding: 5px 0;
+}
+
+.pbtn {
+    width: 70px;
+    height: 40px;
+    border-radius: 15px;
+    background-color: rgb(83, 83, 83);
+    color: white;
+    margin-left: 35%;
+}
+.pbtn:hover {
+    background-color: grey;
+}
+
+section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width:100%; 
+    
+}
+
+.box{
+    margin-top: 30px;
+    width:60%;
+    height: 700px;
+    display: flex;
+    justify-content: center;
+}
+.box1 {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.box div{
+    margin: 15px 15px;
+}
+table{
+
+    margin-top: 15px;
+    color: #291414;
+}
+table input{
+    width:300px;
+    padding-left: 5px;
+}
+
+
+td{
+    font-size: 18px;
+    padding: 8px 10px;
+}
+
+h2 {
+    font-size: 2em;
+    font-weight: bold;
+    color:rgb(167, 26, 26);
+    text-align: center;
+
+}
+
+p{
+    text-align: center;
+    color: grey;
+}
+
+button{
+    width: 30%;
+    height: 40px;
+    margin-top: 10px;
+    border: 1px solid rgb(131, 131, 131);
+    border-radius: 12px;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 550;
+}
+
+@keyframes grow {
+    from {
+        opacity: 0;        
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+.error p {
+    font-size: 0.9em;
+    font-weight: 1000;
+    color: red;
+    margin-top: -10px;
+    margin-bottom: 5px;
+    animation-name: grow;
+    animation-duration: 2s;
+}
+
+#profile {
+    cursor:pointer;
+    background-color: #b70000; 
+    padding: 0 5px; 
+    border: none; 
+    box-shadow: none;
+}
