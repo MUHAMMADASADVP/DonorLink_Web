@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'style_patients.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Patients</title>
+</head>
+<script>
+    function logout() {
+        window.history.pushState("", "", "");
+        window.location.href = "{% url 'logout' %}";
+    }
+
+    function get_patient(name) {
+
+        document.querySelector('#h3').innerHTML = "Patient Details";
+
+        var Details = document.querySelector("#details");
+        var url = '/patients/' + name + '/';
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.Name);
+                var table = document.createElement('table');
+
+                table.id = 'ptable';
+
+                // Create table rows
+                for (var key in data) {
+
+                    var row = document.createElement('tr');
+
+                    // Create table cells within each row
+
+                        var cell = document.createElement('td');
+                        var text = document.createTextNode(key+' : ');
+                        cell.appendChild(text);
+                        row.appendChild(cell);
+
+                        var cell = document.createElement('td');
+                        var text = document.createTextNode(data[key]);
+                        cell.appendChild(text);
+                        row.appendChild(cell);
+
+                    table.appendChild(row);
+                }
+                Details.innerHTML='';
+
+                var btn = document.createElement('button');
+                btn.id ='btn';
+                btn.innerHTML  = 'Request Blood';
+
+                btn.addEventListener('click', () => {
+                    var url = "/completerequest/" + data['ID'] + "/";
+                    window.location.href = url;
+                });
+
+                Details.appendChild(table);
+                Details.appendChild(btn);
+            })
+            .catch(error => {
+                console.log("fetch failed");
+            });
+        }
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        var barcontainer = document.querySelector('.pbar');
+        barcontainer.style.display = 'none';
+        document.querySelector('#profile').addEventListener('click', () => {
+            if (barcontainer.style.display == 'none') {
+                barcontainer.style.display = 'flex';
+            }
+            else {
+                barcontainer.style.display = 'none';
+            }
+        });
+
+        if (document.querySelector("#errorp")) {
+            window.scrollTo(0, 0);
+        }
+
+        document.addEventListener('click', function (event) {
+            var Target = event.target;
+            if (!barcontainer.contains(Target) && (Target.id !== 'profile')) {
+                barcontainer.style.display = 'none';
+            }
+        });
+
+        if (document.querySelector("#btn")) {
+            console.log(document.querySelector("#btn"));
+            document.querySelector('#btn').addEventListener('click',() => {
+                myButton = document.querySelector('#btn');
+                var pid = myButton.dataset.patientId;
+                var url = "/completerequest/" + pid + "/";
+                window.location.href = url;
+
+            });
+        }
+
+
+    });
+
+</script>
+
+<body>
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Donor-link</a>
+        </li>
+        <div class="right">
+            <li class="nav-item">
+                <!-- <a class="nav-link" href="{% url 'logout' %}">Logout</a> -->
+                <img id="profile" src="{% static 'images/profile.png' %}" width="40" height="40">
+            </li>
+        </div>
+    </ul>
+    <div class="pbar">
+        <div class="pitem">
+            <img src="{% static 'images/profile.png' %}" width="60" height="60">
+            <label>{{ user.username }}</label>
+        </div>
+        <h4 class="pi"> {{ user.hospital.city }}</h4>
+        <h4 class='pi'>{{ user.hospital.phoneno }}</h4>
+        <h4 class="pi">{{ user.email }}</h4>
+        <button class='pbtn' onclick='logout()'>Logout</button>
+    </div>
+    {% if history %}
+        <p id="notif" >Your Blood Request For {{ history.npatient.name }} is Successfully Completed By {{ history.nbank.uuser.username }}</p>
+    {% elif error %}
+        <p id="errorp">{{ error }}</p>
+    {% endif %}
+    <h3 id="h3"> Patients </h3>
+    <div id="details">
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Purpose</th>
+                    <th>Phone No</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr onclick="get_patient('{{ patient.name }}')">
+                    <td>{{ patient.name }}</td>
+                    <td>{{ patient.purpose }}</td>
+                    <td>{{ patient.phoneno }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+
+</html>

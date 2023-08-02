@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'style_index.css' %}">
+    <title>Login</title>
+</head>
+<body>
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'index' %}">Donor-link</a>
+        </li>
+    </ul>
+    <section>
+        <div class="box">
+            <form action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+                {% if message %}
+                <div class="error">
+                    <p>{{ message }}</p>
+                </div>
+                {% endif %}
+                <h2>Login</h2>
+                <div class="input_box">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <input type="text" name="username" required placeholder=" " autofocus="true">
+                    <label>Username</label>
+                </div>
+                <div class="input_box">
+                    <ion-icon name="lock-closed-outline"></ion-icon>
+                    <input type="password" name="password" required placeholder=" ">
+                    <label>Password</label>
+                </div>
+                <button type="submit" >Login</button>
+                <div class="newuser">
+                    <p>Don't have an account?<a href="{%  url 'signup' %}"> Sign Up</a></p>
+                </div>
+            </form>
+        </div>
+    </section>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script>
+        window.onbeforeunload = function () {
+            window.scrollTo(0,0);
+        };
+    </script>
+</body>
+</html>

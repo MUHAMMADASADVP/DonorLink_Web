@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'style_getdonor.css' %}">
+    <title>Success</title>
+</head>
+<script>
+    function logout() {
+        window.history.pushState("", "", "");
+        window.location.href = "{% url 'logout' %}";
+    }
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        var barcontainer = document.querySelector('.pbar');
+        barcontainer.style.display = 'none';
+        document.querySelector('#profile').addEventListener('click', () => {
+            if (barcontainer.style.display === 'none') {
+                barcontainer.style.display = 'flex';
+            }
+            else {
+                barcontainer.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', function (event) {
+            var Target = event.target;
+            if (!barcontainer.contains(Target) && (Target.id !== 'profile')) {
+                barcontainer.style.display = 'none';
+            }
+        });
+
+        document.getElementById('search').addEventListener('click', () => {
+            var Input = document.getElementById("did");
+            var did = Input.value;
+            if (did === '') {
+                Input.setCustomValidity("Please input a donor id");
+                Input.reportValidity();
+            }
+            else {
+                console.log(did);
+
+                var url = '/getdonor/' + did + '/';
+                console.log(url);
+                var Details = document.getElementById('details');
+                Details.style.display = 'flex';
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data === null) {
+                            Details.innerHTML = "No such donor Present";
+                            Details.style.color = '#b70000';
+                            Details.style.fontSize = 'medium';
+                            Details.style.fontWeight = 'Bold';
+                        }
+                        else {
+
+                            var table = document.createElement('table');
+
+                            table.id = 'ptable';
+
+                            // Create table rows
+                            for (var key in data) {
+
+                                var row = document.createElement('tr');
+
+                                // Create table cells within each row
+
+                                var cell = document.createElement('td');
+                                var text = document.createTextNode(key + ' : ');
+                                cell.appendChild(text);
+                                row.appendChild(cell);
+
+                                var cell = document.createElement('td');
+                                var text = document.createTextNode(data[key]);
+                                cell.appendChild(text);
+                                row.appendChild(cell);
+
+                                table.appendChild(row);
+                            }
+
+                            Details.innerHTML = '';
+                            Details.style = '';
+
+                            var btn = document.createElement('button');
+                            btn.id = 'btn';
+                            btn.innerHTML = 'Register donation';
+
+                            btn.addEventListener('click', () => {
+                                var url = "/donationregister/" + data['Donor_id'] ;
+                                window.location.href = url;
+                            });
+
+                            Details.appendChild(table);
+                            Details.appendChild(btn);
+                        }
+                    })
+
+                    .catch(error => {
+                        console.log("fetch failed");
+                    });
+            }
+
+        });
+
+
+    });
+
+</script>
+
+<body>
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Donor-link</a>
+        </li>
+        <div class="right">
+            <li class="nav-item">
+                <img id="profile" src="{% static 'images/profile.png' %}" width="40" height="40">
+            </li>
+        </div>
+    </ul>
+    <div class="pbar">
+        <div class="pitem">
+            <img src="{% static 'images/profile.png' %}" width="60" height="60">
+            <label>{{ user.username }}</label>
+        </div>
+        <h4 class="p1"> {{ user.bloodbank.city }}</h4>
+        <h4 class='p1'>{{ user.bloodbank.phoneno }}</h4>
+        <h4 class="p1">{{ user.email }}</h4>
+        <button class='pbtn' onclick='logout()'>Logout</button>
+    </div>
+    <h3>Donation Register</h3>
+    <div id="searchbar">
+        <label>Donor_id:</label>
+        <input type="number" min="1" id="did">
+        <button type="submit" id="search">Search</button>
+    </div>
+    <div id="details">
+        {% if error %}
+            <p id="perror">{{ error }}</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>

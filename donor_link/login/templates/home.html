@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'style_home.css' %}">
+    <title>Success</title>
+</head>
+<script>
+    function logout() { 
+        window.history.pushState("","","");
+        window.location.href = "{% url 'logout' %}";
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        var barcontainer = document.querySelector('.pbar');
+        barcontainer.style.display = 'none';
+        document.querySelector('#profile').addEventListener('click',()=>{
+            if (barcontainer.style.display == 'none'){
+                barcontainer.style.display = 'flex';
+            }
+            else {
+                barcontainer.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', function(event) {
+            var Target = event.target;
+            if (!barcontainer.contains(Target) && (Target.id !== 'profile')){
+                barcontainer.style.display = 'none';
+            }
+        });
+
+        if (document.querySelector('#update')){
+            document.querySelector('#update').addEventListener('click', function () {
+                window.location.href = "{% url 'update' %}";
+            });
+        }
+
+        if(document.querySelector('#bstock')){
+            document.querySelector('#bstock').addEventListener('click', function() {
+                window.location.href = "{% url 'bstock' %}";
+            });
+        }
+
+        if(document.querySelector('#addpatient')){
+            document.querySelector('#addpatient').addEventListener('click', function() {
+                window.location.href = "{% url 'addpatient' %}";
+            });
+        }
+
+        if(document.querySelector('#patients')){
+            document.querySelector('#patients').addEventListener('click', function() {
+                window.location.href = "{% url 'patients'  %}";
+            });
+        }
+
+        if(document.querySelector('#history')){
+            document.querySelector('#history').addEventListener('click', function() {
+                window.location.href = "{% url 'history'  %}";
+            });
+        }
+
+        if(document.querySelector('#donorlist')){
+            document.querySelector('#donorlist').addEventListener('click', function() {
+                window.location.href = "{% url 'donorlist'  %}";
+            });
+        }
+
+        if(document.querySelector('#consentform')){
+            document.querySelector('#consentform').addEventListener('click', function() {
+                window.location.href = "{% url 'consentform'  %}";
+            });
+        }
+
+        if(document.querySelector('#notifications')){
+            document.querySelector('#notifications').addEventListener('click', function() {
+                window.location.href = "{% url 'notifications'  %}";
+            });
+        }
+        
+        if(document.querySelector('#donationreg')){
+            document.querySelector('#donationreg').addEventListener('click', function() {
+                window.location.href = "{% url 'getdonor'  %}";
+            });
+        }
+
+    });
+
+
+</script>
+<body>
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Donor-link</a>
+        </li>
+        <div class="right">
+        <li class="nav-item" >
+            <!-- <a class="nav-link" href="{% url 'logout' %}">Logout</a> -->
+            <img id="profile" src="{% static 'images/profile.png' %}" width="40" height="40">
+        </li>
+        </div>
+    </ul>
+    {% if user.role == 'donor' %}
+
+    <div class="pbar">
+        <div class="pitem">
+            <img src="{% static 'images/profile.png' %}" width="60" height="60">
+            <label>{{ user.username }}</label>
+        </div>
+        <h4 class="p1">ID : {{ user.donor.id }}</h4>
+        <h4 class="p1"> {{ user.donor.city }}</h4>
+        <h4 class='p1'>{{ user.donor.phoneno }}</h4>
+        <h4 class="p1">{{ user.email }}</h4>
+        <button class='pbtn' onclick= 'logout()' >Logout</button>
+    </div>
+    <h3>Donor Functions</h3>
+    <div class="functions">
+        <div class="f" id="consentform">
+            <img src="{% static '/images/donate.png' %}"  width="200" height="160">
+            <label>Consent Form</label>
+        </div>
+        <div class="f" id='update' >
+            <img src="{% static '/images/edit.png' %}" alt='edit.png' width="200" height="160">
+            <label>Update Details</Details></label>
+        </div>
+        <div class="f" id="notifications">
+            <img src="{% static '/images/notification.png' %}" width="200" height="160">
+            <label>Notification</label>
+        </div>
+    </div>
+
+    {% elif user.role == 'hospital' %}
+
+    <div class="pbar">
+        <div class="pitem">
+            <img src="{% static 'images/profile.png' %}" width="60" height="60">
+            <label>{{ user.username }}</label>
+        </div>
+        <h4 class="p1">ID : {{ user.hospital.id }}</h4>
+        <h4 class="p1"> {{ user.hospital.city }}</h4>
+        <h4 class='p1'>{{ user.hospital.phoneno }}</h4>
+        <h4 class="p1">{{ user.email }}</h4>
+        <button class='pbtn' onclick= 'logout()' >Logout</button>
+    </div>
+    <h3>Hospital Functions</h3>
+    <div class="functions">
+        <div class="f" id="patients" >
+            <img src="{% static '/images/patients.png' %}"  width="200" height="160">
+            <label>Patient Details</label>
+        </div>
+        <div class="f" id="addpatient" >
+            <img src="{% static '/images/add.png' %}" alt='edit.png' width="200" height="160">
+            <label>Add Patient</Details></label>
+        </div>
+        <div class="f" id="history">
+            <img src="{% static '/images/history.png' %}" width="200" height="160" onclick="">
+            <label>History</label>
+        </div>
+    </div>
+
+    {% elif user.role == 'bloodbank' %}
+
+    <div class="pbar">
+        <div class="pitem">
+            <img src="{% static 'images/profile.png' %}" width="60" height="60">
+            <label>{{ user.username }}</label>
+        </div>
+        <h4 class="p1">ID : {{ user.bloodbank.id }}</h4>
+        <h4 class="p1"> {{ user.bloodbank.city }}</h4>
+        <h4 class='p1'>{{ user.bloodbank.phoneno }}</h4>
+        <h4 class="p1">{{ user.email }}</h4>
+        <button class='pbtn' onclick= 'logout()'>Logout</button>
+    </div>
+    <h3>BloodBank Functions</h3>
+    <div class="functions">
+        <div class="f" id="donorlist">
+            <img src="{% static '/images/list.png' %}"  width="200" height="160">
+            <label>Donor List</label>
+        </div>
+        <div class="f" id='bstock' >
+            <img src="{% static '/images/stock.png' %}" width="200" height="160">
+            <label>Blood Stock</Details></label>
+        </div>
+        <div class="f" id='donationreg' >
+            <img src="{% static '/images/donationregister.png' %}" width="200" height="160">
+            <label>Donation Register</Details></label>
+        </div>
+        <div class="f" id="history">
+            <img src="{% static '/images/history.png' %}" width="200" height="160">
+            <label>Donation History</label>
+        </div>
+    </div>
+
+    {% endif %}
+    </body>
+</html>

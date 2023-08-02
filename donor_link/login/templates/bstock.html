@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'style_bstock.css' %}">
+    <title>Success</title>
+</head>
+<script>
+    function logout() { 
+        window.history.pushState("","","");
+        window.location.href = "{% url 'logout' %}";
+    }
+    function updateInputValue() {
+            var  selelctElement = document.getElementById("slct");
+            var inputValue = document.getElementById("inp");
+            var attr = selelctElement.value;
+
+            var url = '/get_attr_value/'+attr+'/';
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    inputValue.value = data.attrvalue;
+                })
+                .catch( error => {
+                    console.log("fetch failed");
+                });
+        }
+    document.addEventListener('DOMContentLoaded', () => {
+        var barcontainer = document.querySelector('.pbar');
+        barcontainer.style.display = 'none';
+        document.querySelector('#profile').addEventListener('click',()=>{
+            if (barcontainer.style.display === 'none'){
+                barcontainer.style.display = 'flex';
+            }
+            else {
+                barcontainer.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', function(event) {
+            var Target = event.target;
+            if (!barcontainer.contains(Target) && (Target.id !== 'profile')){
+                barcontainer.style.display = 'none';
+            }
+        });
+
+    });
+
+</script>
+<body>
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Donor-link</a>
+        </li>
+        <div class="right">
+        <li class="nav-item" >
+            <img id="profile" src="{% static 'images/profile.png' %}"  width="40" height="40">
+        </li>
+        </div>
+    </ul>
+    <div class="pbar">
+        <div class="pitem">
+            <img src="{% static 'images/profile.png' %}" width="60" height="60">
+            <label>{{ user.username }}</label>
+        </div>
+        <h4 class="p1"> {{ user.bloodbank.city }}</h4>
+        <h4 class='p1'>{{ user.bloodbank.phoneno }}</h4>
+        <h4 class="p1">{{ user.email }}</h4>
+        <button class='pbtn' onclick= 'logout()'>Logout</button>
+    </div>
+    <section>
+            {% if messages %}
+            {% for message in messages %}
+            <div class="error">
+                <p id="errorp">{{ message }}</p>
+            </div>
+            {% endfor %}
+            {% endif %}
+            <h3>BloodBank Stock</h3>
+            <div class="container">
+                <div class="sbox">
+                    <div class='sitem'><h4>A+ : {{ user.bloodbank.bankstock.ap }} </h4></div>
+                    <div class='sitem'><h4>A- : {{ user.bloodbank.bankstock.an }}</h4></div>
+                    <div class='sitem'><h4>B+ : {{ user.bloodbank.bankstock.bp }}</h4></div>
+                    <div class='sitem'><h4>B- : {{ user.bloodbank.bankstock.bn }}</h4></div>
+                    <div class='sitem'><h4>AB+ : {{ user.bloodbank.bankstock.abp }}</h4></div>
+                    <div class='sitem'><h4>AB- : {{ user.bloodbank.bankstock.abn }}</h4></div>
+                    <div class='sitem'><h4>O+ : {{ user.bloodbank.bankstock.op }}</h4></div>
+                    <div class='sitem'><h4>O- : {{ user.bloodbank.bankstock.on }}</h4></div>
+                </div>
+            </div>
+            <form  class= "bstck" action="{% url 'bstock' %}" method="POST">
+                {% csrf_token %}
+                <select id="slct" name="bloodgroup" onchange="updateInputValue()" required>
+                    <option value="" disabled selected>Select a Blood Group</option>
+                    <option value="ap">A+</option>
+                    <option value="an">A-</option>
+                    <option value="abp">AB+</option>
+                    <option value="abn">AB-</option>
+                    <option value="bp">B+</option>
+                    <option value="bn">B-</option>
+                    <option value="op">O+</option>
+                    <option value="on">O-</option>
+                </select>
+                <input id="inp" type="number" min="0" max="99" name="bvalue" required>
+                <button type="submit">Update</button>
+            </form>
+    </section>
+</body>
+</html>

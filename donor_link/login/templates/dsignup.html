@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'style_signup.css' %}">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        window.onbeforeunload = function () {
+            window.scrollTo(0,0);
+        };
+        $(document).ready(function() {
+            var citiesByState = {
+                "Kannur": ["Payyanur", "Thalassery", "kannur"],
+                "Ernakulam": ["Kochi", "Kalamassery", "Aluva"],
+                "Thiruvananthapuram": ["Neyyattinkara", "Attingal", "Nedumangad"]
+            };
+            $("#district").change(function() {
+                var selectedState = $(this).val();
+                if (selectedState) {
+                    var cities = citiesByState[selectedState] || [];
+                    var options = cities.map(function(city) {
+                        return "<option value='" + city + "'>" + city + "</option>";
+                    });
+                    options.unshift("<option value='' selected disabled>Select a city</option>");
+                    $("#city").html(options.join("")).prop("disabled", false);
+                } else {
+                    $("#city").html("<option value='' selected disabled>Select a state first</option>").prop("disabled", true);
+                }
+            });
+        });
+    </script>
+    <title>SignUp</title>
+</head>
+<body>
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'index' %}">Donor-link</a>
+        </li>
+        <div class="right">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'signup' %}">Donor</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'hsignup' %}">Hospital</a>
+        </li>
+        <li class="nav-item" >
+            <a class="nav-link" href="{% url 'bsignup' %}">BloodBank</a>
+        </li>
+        </div>
+    </ul>
+    <section>
+        <div class="box">
+            <form  class= "box1" action="{% url 'signup' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if message %}
+                <div class="error">
+                    <p>{{ message }}</p>
+                </div>
+                {% endif %}
+                <h2 style=>Donor Registration</h2>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><label>Username</label></td>
+                            <td><input type="text" name="username"required ></td>
+                        </tr>
+                        <tr>
+                            <td><label>Email</label></td>
+                            <td><input type="email" name="email" required oninvalid="this.setCustomValidity('Enter valid email')" oninput="this.setCustomValidity('')" ></td>
+                        </tr>
+                        <tr>
+                            <td><label>Phone No</label></td>
+                            <td><input type="tel" pattern="[0-9]{10}" name="phoneno"required ></td>
+                        </tr>
+                        <tr>
+                            <td><label>Age</label></td>
+                            <td><input type="tel" pattern="(1[7-9])|([2-9][0-9])" name="age" oninvalid="this.setCustomValidity('Age 17 or above can only donate blood')" oninput="this.setCustomValidity('')"required ></td>
+                        </tr>
+                        <tr>
+                            <td><label>Blood Group</label></td>
+                            <td><select name="bloodgroup" required>
+                                <option value="" disabled selected>Select a Blood Group</option>
+                                <option value="ap">A+</option>
+                                <option value="an">A-</option>
+                                <option value="abp">AB+</option>
+                                <option value="abn">AB-</option>
+                                <option value="bp">B+</option>
+                                <option value="bn">B-</option>
+                                <option value="op">O+</option>
+                                <option value="on">O-</option>
+                            </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label>District</label></td>
+                            <td><select id="district" name="district" required >
+                                <option value="" disabled selected>Select a district</option>
+                                <option value="Kannur">Kannur</option>
+                                <option value="Ernakulam">Ernakulam</option>
+                                <option value="Thiruvananthapuram">Thiruvananthapuram</option></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label>City</label></td>
+                            <td><select id="city" name="city" disabled required>
+                                <option value="" disabled selected>Select a city</option></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="doctd"><li>Document</li><li id="info">( upload certificates that proves your identity)</li></td>
+                            <td><input type="file" name="doc" required ></td>
+                        </tr>
+                        <tr>
+                            <td><label>Password</label></td>
+                            <td><input type="password" name="password" required ></td>
+                        </tr>
+                        <tr>
+                            <td><label>Confirm Password</label></td>
+                            <td><input type="password" name="confirmation" required ></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="submit" >SignUp</button>
+                <div class="newuser">
+                    <p>Already have an account? <a href="{%  url 'login' %}">Login</a></p>
+                </div>
+            </form>
+        </div>
+    </section>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

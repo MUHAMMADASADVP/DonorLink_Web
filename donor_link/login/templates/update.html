@@ -1,0 +1,181 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'style_update.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Success</title>
+</head>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        document.querySelector('.pbtn').addEventListener('click',function logout() { 
+            window.history.pushState("","","");
+            window.location.href = "{% url 'logout' %}";
+        });
+
+        var barcontainer = document.querySelector('.pbar');
+        barcontainer.style.display = 'none';
+        document.querySelector('#profile').addEventListener('click',()=>{
+            if (barcontainer.style.display == 'none'){
+                barcontainer.style.display = 'flex';
+            }
+            else {
+                barcontainer.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', function(event) {
+            var Target = event.target;
+            if (!barcontainer.contains(Target) && (Target.id !== 'profile')){
+                barcontainer.style.display = 'none';
+            }
+        });
+
+        var bg = "{{ user.donor.bg }}";
+        var dist = "{{ user.donor.district }}";
+        var cty = "{{ user.donor.city }}";
+
+
+        var citiesByState = {
+                "Kannur": ["Payyanur", "Thalassery", "kannur"],
+                "Ernakulam": ["Kochi", "Kalamassery", "Aluva"],
+                "Thiruvananthapuram": ["Neyyattinkara", "Attingal", "Nedumangad"]
+            };
+
+        var selectField1 = document.getElementById("bloodgroup");
+        for ( var i=0; i < selectField1.options.length; i++){
+            var option = selectField1.options[i];
+            if (option.value === bg){
+                option.selected = true;
+                break;
+            }
+        }
+
+        var selectField2 = document.getElementById("district");
+        for ( var i=0; i < selectField2.options.length; i++){
+            var option = selectField2.options[i];
+            if (option.value === dist){
+                option.selected = true;
+                var cities = citiesByState[dist] || [];
+                var options = cities.map(function(city) {
+                        if (city === cty){
+                        return "<option value='" + city + "' selected >" + city + "</option>";
+                        }
+                        else{
+                            return "<option value='" + city + "'>" + city + "</option>";
+                        }
+                });
+                console.log(options);
+                var selectField3 = document.getElementById("city");
+                selectField3.innerHTML = options.join("");
+                break;
+            }
+        }
+        $("#district").change(function() {
+                var selectedState = $(this).val();
+                if (selectedState) {
+                    var cities = citiesByState[selectedState] || [];
+                    var options = cities.map(function(city) {
+                        return "<option value='" + city + "'>" + city + "</option>";
+                    });
+                    options.unshift("<option value='' selected disabled>Select a city</option>");
+                    $("#city").html(options.join("")).prop("disabled", false);
+                } else {
+                    $("#city").html("<option value='' selected disabled>Select a state first</option>").prop("disabled", true);
+                }
+            });
+    
+    
+    });
+
+    
+
+</script>
+<body>
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Donor-link</a>
+        </li>
+        <div class="right">
+        <li class="nav-item" >
+            <!-- <a class="nav-link" href="{% url 'logout' %}">Logout</a> -->
+            <img id="profile" src="{% static 'images/profile.png' %}"  width="40" height="40">
+        </li>
+        </div>
+    </ul>
+    <div class="pbar">
+        <div class="pitem">
+            <img src="{% static 'images/profile.png' %}" width="60" height="60">
+            <label>{{ user.username }}</label>
+        </div>
+        <h4 class="p1"> {{ user.donor.city }}</h4>
+        <h4 class='p1'>{{ user.donor.phoneno }}</h4>
+        <h4 class="p1">{{ user.email }}</h4>
+        <button class='pbtn'>Logout</button>
+    </div>
+    <section>
+        <div class="box">
+            <form  class= "box1" action="{% url 'update' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if message %}
+                <div class="error">
+                    <p>{{ message }}</p>
+                </div>
+                {% endif %}
+                <h2 style=>Update Details</h2>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><label>Email</label></td>
+                            <td><input type="email" name="email" value="{{ user.email }}" required oninvalid="this.setCustomValidity('Enter valid email')" oninput="this.setCustomValidity('')" ></td>
+                        </tr>
+                        <tr>
+                            <td><label>Phone No</label></td>
+                            <td><input type="tel" pattern="[0-9]{10}" value="{{ user.donor.phoneno }}"  name="phoneno"required ></td>
+                        </tr>
+                        <tr>
+                            <td><label>Age</label></td>
+                            <td><input type="tel" pattern="(1[7-9])|([2-9][0-9])" value="{{ user.donor.age }}" name="age" oninvalid="this.setCustomValidity('Age 17 or above can only donate blood')" oninput="this.setCustomValidity('')"required ></td>
+                        </tr>
+                        <tr>
+                            <td><label>Blood Group</label></td>
+                            <td><select id="bloodgroup" name="bloodgroup" required>
+                                <option value="ap">A+</option>
+                                <option value="an">A-</option>
+                                <option value="abp">AB+</option>
+                                <option value="abn">AB-</option>
+                                <option value="bp">B+</option>
+                                <option value="bn">B-</option>
+                                <option value="op">O+</option>
+                                <option value="on">O-</option>
+                            </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label>District</label></td>
+                            <td><select id="district" name="district" required >
+                                <option value="Kannur">Kannur</option>
+                                <option value="Ernakulam">Ernakulam</option>
+                                <option value="Thiruvananthapuram">Thiruvananthapuram</option></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label>City</label></td>
+                            <td><select id="city" name="city" required>
+                            </select>
+                            </td>
+                        </tr>
+                </table>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </section>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html>
